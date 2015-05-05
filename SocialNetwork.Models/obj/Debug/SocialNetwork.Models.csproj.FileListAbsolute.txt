@@ -1,0 +1,14 @@
+C:\Users\Jamal\Source\Repos\Forum\SocialNetwork\SocialNetwork.Models\bin\Debug\SocialNetwork.Models.dll.config
+C:\Users\Jamal\Source\Repos\Forum\SocialNetwork\SocialNetwork.Models\bin\Debug\SocialNetwork.Models.dll
+C:\Users\Jamal\Source\Repos\Forum\SocialNetwork\SocialNetwork.Models\bin\Debug\SocialNetwork.Models.pdb
+C:\Users\Jamal\Source\Repos\Forum\SocialNetwork\SocialNetwork.Models\bin\Debug\EntityFramework.dll
+C:\Users\Jamal\Source\Repos\Forum\SocialNetwork\SocialNetwork.Models\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\Jamal\Source\Repos\Forum\SocialNetwork\SocialNetwork.Models\bin\Debug\Microsoft.AspNet.Identity.Core.dll
+C:\Users\Jamal\Source\Repos\Forum\SocialNetwork\SocialNetwork.Models\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.dll
+C:\Users\Jamal\Source\Repos\Forum\SocialNetwork\SocialNetwork.Models\bin\Debug\EntityFramework.xml
+C:\Users\Jamal\Source\Repos\Forum\SocialNetwork\SocialNetwork.Models\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\Jamal\Source\Repos\Forum\SocialNetwork\SocialNetwork.Models\bin\Debug\Microsoft.AspNet.Identity.Core.xml
+C:\Users\Jamal\Source\Repos\Forum\SocialNetwork\SocialNetwork.Models\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.xml
+C:\Users\Jamal\Source\Repos\Forum\SocialNetwork\SocialNetwork.Models\obj\Debug\SocialNetwork.Models.csprojResolveAssemblyReference.cache
+C:\Users\Jamal\Source\Repos\Forum\SocialNetwork\SocialNetwork.Models\obj\Debug\SocialNetwork.Models.dll
+C:\Users\Jamal\Source\Repos\Forum\SocialNetwork\SocialNetwork.Models\obj\Debug\SocialNetwork.Models.pdb
