@@ -1,0 +1,6 @@
+packages/
+Test/
+TestResults/
+SocialNetwork.sln.DotSettings.user
+SocialNetwork.v12.suo
+*.suo
