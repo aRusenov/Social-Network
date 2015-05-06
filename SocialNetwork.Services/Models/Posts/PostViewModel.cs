@@ -19,7 +19,7 @@
 
         public string WallOwnerId { get; set; }
 
-        public string Content { get; set; }
+        public string PostContent { get; set; }
 
         public DateTime Date { get; set; }
 
@@ -40,7 +40,7 @@
                 AuthorUsername = p.Author.UserName,
                 AuthorProfileImage = p.Author.ProfileImageDataMinified,
                 WallOwnerId = p.WallOwnerId,
-                Content = p.Content,
+                PostContent = p.Content,
                 Date = p.Date,
                 LikesCount = p.Likes.Count,
                 Liked = p.Likes

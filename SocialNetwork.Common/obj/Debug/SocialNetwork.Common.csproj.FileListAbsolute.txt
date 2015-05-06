@@ -3,3 +3,8 @@ C:\Users\Jamal\Source\Repos\Forum\SocialNetwork\SocialNetwork.Common\bin\Debug\S
 C:\Users\Jamal\Source\Repos\Forum\SocialNetwork\SocialNetwork.Common\obj\Debug\SocialNetwork.Common.csprojResolveAssemblyReference.cache
 C:\Users\Jamal\Source\Repos\Forum\SocialNetwork\SocialNetwork.Common\obj\Debug\SocialNetwork.Common.dll
 C:\Users\Jamal\Source\Repos\Forum\SocialNetwork\SocialNetwork.Common\obj\Debug\SocialNetwork.Common.pdb
+C:\GitHub\SocialNetwork\SocialNetwork.Common\bin\Debug\SocialNetwork.Common.dll
+C:\GitHub\SocialNetwork\SocialNetwork.Common\bin\Debug\SocialNetwork.Common.pdb
+C:\GitHub\SocialNetwork\SocialNetwork.Common\obj\Debug\SocialNetwork.Common.csprojResolveAssemblyReference.cache
+C:\GitHub\SocialNetwork\SocialNetwork.Common\obj\Debug\SocialNetwork.Common.dll
+C:\GitHub\SocialNetwork\SocialNetwork.Common\obj\Debug\SocialNetwork.Common.pdb

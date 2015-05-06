@@ -1,5 +1,6 @@
 ﻿namespace SocialNetwork.Common
 {
+    using System;
     using System.Collections.Generic;
     using System.Web.Script.Serialization;
 
@@ -17,6 +18,11 @@
             var jsSerializer = new JavaScriptSerializer();
 
             return jsSerializer.Deserialize<Dictionary<string, string>>(str);
+        }
+
+        public static bool ContainsCaseInsensitive(this string str, string searchTerm)
+        {
+            return str.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0;
         }
     }
 }

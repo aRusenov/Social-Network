@@ -27,7 +27,7 @@
 
             var formData = new FormUrlEncodedContent(new[]
             {
-                new KeyValuePair<string, string>("content", "new content")
+                new KeyValuePair<string, string>("commentContent", "new content")
             });
 
             int commentCount = nonFriendPostOnFriendWall.Comments.Count;
@@ -55,7 +55,7 @@
 
             var formData = new FormUrlEncodedContent(new[]
             {
-                new KeyValuePair<string, string>("content", "new content")
+                new KeyValuePair<string, string>("commentContent", "new content")
             });
 
             int commentCount = friendPostOnNonFriendWall.Comments.Count;
@@ -98,13 +98,13 @@
 
             var formData = new FormUrlEncodedContent(new[]
             {
-                new KeyValuePair<string, string>("content", "new content")
+                new KeyValuePair<string, string>("postContent", "new content")
             });
 
             var editRequest = this.httpClient.PostAsync(
                 string.Format("api/posts/{0}/comments", foreignComment.Id), formData).Result;
 
-            Assert.AreEqual(HttpStatusCode.OK, editRequest.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, editRequest.StatusCode);
         }
 
         [TestMethod]
@@ -118,7 +118,7 @@
 
             var formData = new FormUrlEncodedContent(new[]
             {
-                new KeyValuePair<string, string>("content", "edited")
+                new KeyValuePair<string, string>("commentContent", "edited")
             });
 
             var editRequest = this.httpClient.PutAsync(

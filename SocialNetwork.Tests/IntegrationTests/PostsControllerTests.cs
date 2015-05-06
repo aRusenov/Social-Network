@@ -39,7 +39,7 @@
             var post = this.Data.Posts.All().First();
             var formData = new FormUrlEncodedContent(new[]
             {
-                new KeyValuePair<string, string>("content", "new content")
+                new KeyValuePair<string, string>("postContent", "new content")
             });
 
             var putResponse = this.httpClient.PutAsync(
@@ -175,6 +175,80 @@
 
             this.Data = new SocialNetworkData();
             Assert.AreEqual(postLikesCount - 1, this.Data.Posts.GetById(unlikedOwnPost.Id).Likes.Count);
+        }
+
+        [TestMethod]
+        public void PostingOnOwnWallShouldAddPost()
+        {
+            var loginResponse = this.Login(SeededUserUsername, SeededUserPassword);
+            var username = loginResponse.Content.ReadAsStringAsync().Result.ToJson()["userName"];
+
+            var user = this.Data.Users.All()
+                .First(u => u.UserName == username);
+            var formData = new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("postContent", "Heeey brother.."),
+                new KeyValuePair<string, string>("userId", user.Id)
+            });
+
+            int postsCount = user.WallPosts.Count;
+
+            var postResponse = this.httpClient.PostAsync(
+                string.Format("api/posts"), formData).Result;
+
+            this.ReloadContext();
+
+            Assert.AreEqual(HttpStatusCode.OK, postResponse.StatusCode);
+            Assert.AreEqual(postsCount + 1, this.Data.Users.GetById(user.Id).WallPosts.Count);
+        }
+
+        [TestMethod]
+        public void PostingOnFriendWallShouldAddPostToWall()
+        {
+            var loginResponse = this.Login(SeededUserUsername, SeededUserPassword);
+            var username = loginResponse.Content.ReadAsStringAsync().Result.ToJson()["userName"];
+
+            var friend = this.Data.Users.All()
+                .First(u => u.Friends
+                    .Any(fr => fr.UserName == username));
+
+            var formData = new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("postContent", "Heeey brother.."),
+                new KeyValuePair<string, string>("userId", friend.Id)
+            });
+
+            int wallPostsCounts = friend.WallPosts.Count;
+
+            var postResponse = this.httpClient.PostAsync(
+                string.Format("api/posts"), formData).Result;
+
+            this.Data = new SocialNetworkData();
+
+            Assert.AreEqual(HttpStatusCode.OK, postResponse.StatusCode);
+            Assert.AreEqual(wallPostsCounts + 1, this.Data.Users.GetById(friend.Id).WallPosts.Count);
+        }
+
+        [TestMethod]
+        public void PostingOnNonFriendWallShouldReturnBadRequest()
+        {
+            var loginResponse = this.Login(SeededUserUsername, SeededUserPassword);
+            var username = loginResponse.Content.ReadAsStringAsync().Result.ToJson()["userName"];
+
+            var nonFriend = this.Data.Users.All()
+                .First(u => u.UserName != username && u.Friends
+                    .All(fr => fr.UserName != username));
+
+            var formData = new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("content", "Heeey brother.."),
+                new KeyValuePair<string, string>("userId", nonFriend.Id)
+            });
+
+            var postResponse = this.httpClient.PostAsync(
+                string.Format("api/posts"), formData).Result;
+
+            Assert.AreEqual(HttpStatusCode.BadRequest, postResponse.StatusCode);
         }
     }
 }

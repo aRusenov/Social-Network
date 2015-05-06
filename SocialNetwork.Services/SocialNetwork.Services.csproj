@@ -256,6 +256,7 @@
     <Compile Include="Models\Users\NewsFeedBindingModel.cs" />
     <Compile Include="Models\Users\RegisterUserBindingModel.cs" />
     <Compile Include="Models\Users\GetWallBindingModel.cs" />
+    <Compile Include="Models\Users\UserViewModelMinified.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Results\ChallengeResult.cs" />

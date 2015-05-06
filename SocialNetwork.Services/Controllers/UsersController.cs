@@ -1,6 +1,5 @@
 ﻿namespace SocialNetwork.Services.Controllers
 {
-    using System;
     using System.Linq;
     using System.Collections.Generic;
     using System.Net;
@@ -213,11 +212,8 @@
             var userMatches = this.SocialNetworkData.Users.All()
                 .Where(u => u.Name.ToLower().Contains(searchTerm))
                 .Take(5)
-                .Select(u => new
-                {
-                    id = u.Id,
-                    profileImage = u.ProfileImageDataMinified
-                });
+                .AsEnumerable()
+                .Select(u => UserViewModelMinified.Create(u));
 
             return this.Ok(userMatches);
         }
@@ -308,62 +304,6 @@
                 .Select(p => PostViewModel.Create(p, loggedUser));
 
             return this.Ok(pagePosts);
-        }
-
-        [HttpPost]
-        [Route("{username}/wall")]
-        public IHttpActionResult PostOnWall(string username, AddPostBindingModel postModel)
-        {
-            if (!this.ModelState.IsValid)
-            {
-                return this.BadRequest(this.ModelState);
-            }
-
-            var wallOwner = this.SocialNetworkData.Users.All()
-                .FirstOrDefault(u => u.UserName == username);
-            if (wallOwner == null)
-            {
-                return this.NotFound();
-            }
-
-            var loggedUserId = this.User.Identity.GetUserId();
-
-            var loggedUser = this.SocialNetworkData.Users
-                .GetById(loggedUserId);
-
-            if (loggedUserId == null)
-            {
-                return this.BadRequest("Invalid session token.");
-            }
-
-            if (wallOwner.Id != loggedUserId)
-            {
-                var isFriendOfWallOwner = wallOwner.Friends
-                   .Any(fr => fr.Id == loggedUserId);
-                if (!isFriendOfWallOwner)
-                {
-                    return this.BadRequest("Only friends can post on user's wall.");
-                }
-            }
-
-            var newPost = new Post()
-            {
-                Content = postModel.Content,
-                WallOwner = wallOwner,
-                WallOwnerId = wallOwner.Id,
-                Author = loggedUser,
-                AuthorId = loggedUserId,
-                Date = DateTime.Now
-            };
-
-            this.SocialNetworkData.Posts.Add(newPost);
-            this.SocialNetworkData.SaveChanges();
-
-            return this.Ok(new
-            {
-                message = "Post successfully added.",
-                post = PostViewModel.Create(newPost, loggedUser)
-            });
         }
 
         [HttpGet]

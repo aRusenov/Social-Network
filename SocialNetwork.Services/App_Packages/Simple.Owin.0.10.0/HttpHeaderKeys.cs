@@ -86,39 +86,39 @@
         public const string Connection = "Connection";
 
         /// <summary>
-        /// The <c>Content-Encoding</c> entity-header field.
+        /// The <c>PostContent-Encoding</c> entity-header field.
         /// </summary>
-        public const string ContentEncoding = "Content-Encoding";
+        public const string ContentEncoding = "PostContent-Encoding";
 
         /// <summary>
-        /// The <c>Content-Language</c> entity-header field.
+        /// The <c>PostContent-Language</c> entity-header field.
         /// </summary>
-        public const string ContentLanguage = "Content-Language";
+        public const string ContentLanguage = "PostContent-Language";
 
         /// <summary>
-        /// The <c>Content-Length</c> entity-header field.
+        /// The <c>PostContent-Length</c> entity-header field.
         /// </summary>
-        public const string ContentLength = "Content-Length";
+        public const string ContentLength = "PostContent-Length";
 
         /// <summary>
-        /// The <c>Content-Location</c> entity-header field.
+        /// The <c>PostContent-Location</c> entity-header field.
         /// </summary>
-        public const string ContentLocation = "Content-Location";
+        public const string ContentLocation = "PostContent-Location";
 
         /// <summary>
-        /// The <c>Content-MD5</c> entity-header field.
+        /// The <c>PostContent-MD5</c> entity-header field.
         /// </summary>
-        public const string ContentMd5 = "Content-MD5";
+        public const string ContentMd5 = "PostContent-MD5";
 
         /// <summary>
-        /// The <c>Content-Range</c> entity-header field.
+        /// The <c>PostContent-Range</c> entity-header field.
         /// </summary>
-        public const string ContentRange = "Content-Range";
+        public const string ContentRange = "PostContent-Range";
 
         /// <summary>
-        /// The <c>Content-Type</c> entity-header field.
+        /// The <c>PostContent-Type</c> entity-header field.
         /// </summary>
-        public const string ContentType = "Content-Type";
+        public const string ContentType = "PostContent-Type";
 
         /// <summary>
         /// The <c>Cookie</c> request-header field.

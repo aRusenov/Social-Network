@@ -17,7 +17,7 @@
 
         public int LikesCount { get; set; }
 
-        public string Content { get; set; }
+        public string CommentContent { get; set; }
 
         public DateTime Date { get; set; }
 
@@ -30,9 +30,9 @@
                 Id = c.Id,
                 AuthorId = c.AuthorId,
                 AuthorUsername = c.Author.UserName,
-                AuthorProfileImage = c.Author.ProfileImageDataMinified,
+                AuthorProfileImage =  c.Author.ProfileImageDataMinified,
                 LikesCount = c.Likes.Count,
-                Content = c.Content,
+                CommentContent = c.Content,
                 Date = c.Date,
                 Liked = c.Likes
                     .Any(l => l.UserId == currentUser.Id)

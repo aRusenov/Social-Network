@@ -1,4 +1,7 @@
-﻿namespace SocialNetwork.Tests.IntegrationTests
+﻿using System;
+using SocialNetwork.Services.Models.Users;
+
+namespace SocialNetwork.Tests.IntegrationTests
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -88,10 +91,10 @@
         public void GetWallShouldReturnConsecutivePagesWithNonRepeatingPosts()
         {
             this.Login(SeededUserUsername, SeededUserPassword);
-            
+
             var user = this.Data.Users.All()
                 .First(u => u.WallPosts.Count > 10);
- 
+
             const int pageSize = 5;
             int wallPostCount = user.WallPosts.Count();
             int? startId = null;
@@ -145,7 +148,7 @@
                 Assert.IsNotNull(post.AuthorId);
                 Assert.IsNotNull(post.AuthorProfileImage);
                 Assert.IsNotNull(post.AuthorUsername);
-                Assert.IsNotNull(post.Content);
+                Assert.IsNotNull(post.PostContent);
                 Assert.IsNotNull(post.Date);
                 Assert.IsNotNull(post.LikesCount);
                 Assert.IsNotNull(post.Liked);
@@ -157,7 +160,7 @@
                 foreach (var comment in post.Comments)
                 {
                     Assert.IsNotNull(comment.Id);
-                    Assert.IsNotNull(comment.Content);
+                    Assert.IsNotNull(comment.CommentContent);
                     Assert.IsNotNull(comment.AuthorId);
                     Assert.IsNotNull(comment.AuthorProfileImage);
                     Assert.IsNotNull(comment.AuthorUsername);
@@ -165,77 +168,6 @@
                     Assert.IsNotNull(comment.Liked);
                 }
             }
-        }
-
-        [TestMethod]
-        public void PostingOnOwnWallShouldAddPost()
-        {
-            var loginResponse = this.Login(SeededUserUsername, SeededUserPassword);
-            var username = loginResponse.Content.ReadAsStringAsync().Result.ToJson()["userName"];
-
-            var user = this.Data.Users.All()
-                .First(u => u.UserName == username);
-            var formData = new FormUrlEncodedContent(new[]
-            {
-                new KeyValuePair<string, string>("content", "Heeey brother..")
-            });
-
-            int postsCount = user.WallPosts.Count;
-
-            var postResponse = this.httpClient.PostAsync(
-                string.Format("api/users/{0}/wall", username), formData).Result;
-
-            this.ReloadContext();
-
-            Assert.AreEqual(HttpStatusCode.OK, postResponse.StatusCode);
-            Assert.AreEqual(postsCount + 1, this.Data.Users.GetById(user.Id).WallPosts.Count);
-        }
-
-        [TestMethod]
-        public void PostingOnFriendWallShouldAddPostToWall()
-        {
-            var loginResponse = this.Login(SeededUserUsername, SeededUserPassword);
-            var username = loginResponse.Content.ReadAsStringAsync().Result.ToJson()["userName"];
-
-            var friend = this.Data.Users.All()
-                .First(u => u.Friends
-                    .Any(fr => fr.UserName == username));
-
-            var formData = new FormUrlEncodedContent(new[]
-            {
-                new KeyValuePair<string, string>("content", "Heeey brother..")
-            });
-
-            int wallPostsCounts = friend.WallPosts.Count;
-
-            var postResponse = this.httpClient.PostAsync(
-                string.Format("api/users/{0}/wall", friend.UserName), formData).Result;
-
-            this.Data = new SocialNetworkData();
-
-            Assert.AreEqual(HttpStatusCode.OK, postResponse.StatusCode);
-            Assert.AreEqual(wallPostsCounts + 1, this.Data.Users.GetById(friend.Id).WallPosts.Count);
-        }
-
-        [TestMethod]
-        public void PostingOnNonFriendWallShouldReturnBadRequest()
-        {
-            var loginResponse = this.Login(SeededUserUsername, SeededUserPassword);
-            var username = loginResponse.Content.ReadAsStringAsync().Result.ToJson()["userName"];
-
-            var nonFriend = this.Data.Users.All()
-                .First(u => u.UserName != username && u.Friends
-                    .All(fr => fr.UserName != username));
-
-            var formData = new FormUrlEncodedContent(new[]
-            {
-                new KeyValuePair<string, string>("content", "Heeey brother..")
-            });
-
-            var postResponse = this.httpClient.PostAsync(
-                string.Format("api/users/{0}/wall", nonFriend.UserName), formData).Result;
-
-            Assert.AreEqual(HttpStatusCode.BadRequest, postResponse.StatusCode);
         }
 
         [TestMethod]
@@ -257,10 +189,15 @@
         [TestMethod]
         public void GetAllFriendsOfNonFriendShouldReturnBadRequest()
         {
-            this.Login(SeededUserUsername, SeededUserPassword);
+            var loginResponse = this.Login(SeededUserUsername, SeededUserPassword);
+            var username = loginResponse.Content.ReadAsStringAsync().Result.ToJson()["userName"];
+
+            var friend = this.Data.Users.All()
+                .First(u => u.Friends
+                    .All(fr => fr.UserName != username));
 
             var getResponse = this.httpClient.GetAsync(
-                string.Format("api/users/search?searchTerm={0}", "J")).Result;
+                string.Format("api/users/{0}/friends", friend.UserName)).Result;
 
             Assert.AreEqual(HttpStatusCode.BadRequest, getResponse.StatusCode);
         }
@@ -268,7 +205,19 @@
         [TestMethod]
         public void SearchingPartOfNamesReturnUsersWhoseNamesContainThatString()
         {
-            
+            this.Login(SeededUserUsername, SeededUserPassword);
+
+            var usersWithJInNamesCount = this.Data.Users.All()
+                .Count(u => u.Name.ToLower().Contains("j"));
+
+            var getResponse = this.httpClient.GetAsync(
+                string.Format("api/users/search?searchTerm={0}", "J")).Result;
+
+            Assert.AreEqual(HttpStatusCode.OK, getResponse.StatusCode);
+
+            var responseData = getResponse.Content
+                  .ReadAsAsync<IEnumerable<UserViewModelMinified>>().Result;
+            Assert.AreEqual(usersWithJInNamesCount, responseData.Count());
         }
     }
 }

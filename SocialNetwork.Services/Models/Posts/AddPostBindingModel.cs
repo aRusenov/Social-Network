@@ -5,6 +5,9 @@
     public class AddPostBindingModel
     {
         [Required]
-        public string Content { get; set; }
+        public string PostContent { get; set; }
+
+        [Required]
+        public string UserId { get; set; }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace SocialNetwork.Services.Controllers
+﻿using System;
+
+namespace SocialNetwork.Services.Controllers
 {
     using System.Linq;
     using System.Web.Http;
@@ -9,10 +11,68 @@
     using SocialNetwork.Services.Models;
     using SocialNetwork.Services.Models.Likes;
     using SocialNetwork.Services.Models.Posts;
+    using SocialNetwork.Services.UserSessionUtils;
 
+    [SessionAuthorize]
     [RoutePrefix("api/Posts")]
     public class PostsController : BaseApiController
     {
+        [HttpPost]
+        [Route]
+        public IHttpActionResult PostOnWall(AddPostBindingModel postModel)
+        {
+            if (!this.ModelState.IsValid)
+            {
+                return this.BadRequest(this.ModelState);
+            }
+
+            var wallOwner = this.SocialNetworkData.Users.All()
+                .FirstOrDefault(u => u.Id == postModel.UserId);
+            if (wallOwner == null)
+            {
+                return this.NotFound();
+            }
+
+            var loggedUserId = this.User.Identity.GetUserId();
+
+            var loggedUser = this.SocialNetworkData.Users
+                .GetById(loggedUserId);
+
+            if (loggedUserId == null)
+            {
+                return this.BadRequest("Invalid session token.");
+            }
+
+            if (wallOwner.Id != loggedUserId)
+            {
+                var isFriendOfWallOwner = wallOwner.Friends
+                   .Any(fr => fr.Id == loggedUserId);
+                if (!isFriendOfWallOwner)
+                {
+                    return this.BadRequest("Only friends can post on user's wall.");
+                }
+            }
+
+            var newPost = new Post()
+            {
+                Content = postModel.PostContent,
+                WallOwner = wallOwner,
+                WallOwnerId = wallOwner.Id,
+                Author = loggedUser,
+                AuthorId = loggedUserId,
+                Date = DateTime.Now
+            };
+
+            this.SocialNetworkData.Posts.Add(newPost);
+            this.SocialNetworkData.SaveChanges();
+
+            return this.Ok(new
+            {
+                message = "Post successfully added.",
+                post = PostViewModel.Create(newPost, loggedUser)
+            });
+        }
+
         [HttpGet]
         [Route("{id}")]
         public IHttpActionResult Get(int id)
@@ -56,14 +116,14 @@
                 return this.NotFound();
             }
 
-            existingPost.Content = post.Content;
+            existingPost.Content = post.PostContent;
             this.SocialNetworkData.Posts.SaveChanges();
 
             post.Id = existingPost.Id;
             return this.Ok(new
             {
                 id,
-                content = post.Content
+                content = post.PostContent
             });
         }
 

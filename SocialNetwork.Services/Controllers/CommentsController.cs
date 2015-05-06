@@ -33,7 +33,7 @@ namespace SocialNetwork.Services.Controllers
         //            authorId = c.AuthorId,
         //            postId = c.PostId,
         //            likes = c.Likes.Count,
-        //            content = c.Content,
+        //            content = c.PostContent,
         //            date = c.Date
         //        });
 
@@ -74,7 +74,7 @@ namespace SocialNetwork.Services.Controllers
             {
                 AuthorId = userId,
                 PostId = postId,
-                Content = commentBindingModel.Content,
+                Content = commentBindingModel.CommentContent,
                 Date = DateTime.Now
             };
             
@@ -126,7 +126,7 @@ namespace SocialNetwork.Services.Controllers
                 return this.BadRequest(this.ModelState);
             }
 
-            existingComment.Content = comment.Content;
+            existingComment.Content = comment.CommentContent;
             this.SocialNetworkData.SaveChanges();
 
             comment.Id = commentId;

@@ -6,6 +6,6 @@
     {
         [Required]
         [MinLength(2)]
-        public string Content { get; set; }
+        public string CommentContent { get; set; }
     }
 }
