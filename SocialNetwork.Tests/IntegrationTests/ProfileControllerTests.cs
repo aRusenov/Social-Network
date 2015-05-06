@@ -223,5 +223,11 @@
         {
             Assert.Fail();
         }
+
+        [TestMethod]
+        public void GetOwnInfoShouldReturnMinifiedImage_Name_And_PendingRequests()
+        {
+            
+        }
     }
 }

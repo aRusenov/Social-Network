@@ -1,7 +1,4 @@
-﻿using System.Runtime.InteropServices.WindowsRuntime;
-using SocialNetwork.Services.Models.Posts;
-
-namespace SocialNetwork.Tests.IntegrationTests
+﻿namespace SocialNetwork.Tests.IntegrationTests
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -13,6 +10,7 @@ namespace SocialNetwork.Tests.IntegrationTests
 
     using SocialNetwork.Data;
     using SocialNetwork.Common;
+    using SocialNetwork.Services.Models.Posts;
     using SocialNetwork.Tests.Models;
 
     [TestClass]
@@ -259,17 +257,18 @@ namespace SocialNetwork.Tests.IntegrationTests
         [TestMethod]
         public void GetAllFriendsOfNonFriendShouldReturnBadRequest()
         {
-            var loginResponse = this.Login(SeededUserUsername, SeededUserPassword);
-            var username = loginResponse.Content.ReadAsStringAsync().Result.ToJson()["userName"];
-
-            var nonFriend = this.Data.Users.All()
-                .First(u => u.UserName != username && u.Friends
-                    .All(fr => fr.UserName != username));
+            this.Login(SeededUserUsername, SeededUserPassword);
 
             var getResponse = this.httpClient.GetAsync(
-                string.Format("api/users/{0}/friends", nonFriend.UserName)).Result;
+                string.Format("api/users/search?searchTerm={0}", "J")).Result;
 
             Assert.AreEqual(HttpStatusCode.BadRequest, getResponse.StatusCode);
+        }
+
+        [TestMethod]
+        public void SearchingPartOfNamesReturnUsersWhoseNamesContainThatString()
+        {
+            
         }
     }
 }

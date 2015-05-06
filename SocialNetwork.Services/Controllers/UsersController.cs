@@ -200,6 +200,29 @@
         }
 
         [HttpGet]
+        [Route("search")]
+        public IHttpActionResult SearchUserByName([FromUri] string searchTerm)
+        {
+            var loggedUserId = this.User.Identity.GetUserId();
+            if (loggedUserId == null)
+            {
+                return this.BadRequest("Invalid session token.");
+            }
+
+            searchTerm = searchTerm.ToLower();
+            var userMatches = this.SocialNetworkData.Users.All()
+                .Where(u => u.Name.ToLower().Contains(searchTerm))
+                .Take(5)
+                .Select(u => new
+                {
+                    id = u.Id,
+                    profileImage = u.ProfileImageDataMinified
+                });
+
+            return this.Ok(userMatches);
+        }
+
+        [HttpGet]
         [Route("{username}")]
         public IHttpActionResult GetUser(string username)
         {
