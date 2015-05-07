@@ -1,7 +1,4 @@
-﻿using System;
-using SocialNetwork.Services.Models.Users;
-
-namespace SocialNetwork.Tests.IntegrationTests
+﻿namespace SocialNetwork.Tests.IntegrationTests
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -11,9 +8,9 @@ namespace SocialNetwork.Tests.IntegrationTests
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-    using SocialNetwork.Data;
     using SocialNetwork.Common;
     using SocialNetwork.Services.Models.Posts;
+    using SocialNetwork.Services.Models.Users;
     using SocialNetwork.Tests.Models;
 
     [TestClass]
@@ -203,7 +200,7 @@ namespace SocialNetwork.Tests.IntegrationTests
         }
 
         [TestMethod]
-        public void SearchingPartOfNamesReturnUsersWhoseNamesContainThatString()
+        public void SearchingPartOfNameReturnUsersWhoseNamesContainThatString()
         {
             this.Login(SeededUserUsername, SeededUserPassword);
 

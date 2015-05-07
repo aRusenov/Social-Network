@@ -1,21 +1,19 @@
-﻿using System;
-using SocialNetwork.Services.Models.Posts;
-
-namespace SocialNetwork.Services.Controllers
+﻿namespace SocialNetwork.Services.Controllers
 {
     using System.Linq;
     using System.Threading.Tasks;
+    using System.Web.Http;
+
+    using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;
 
     using SocialNetwork.Common;
     using SocialNetwork.Data;
     using SocialNetwork.Models;
+    using SocialNetwork.Services.Models.Posts;
     using SocialNetwork.Services.Models.Users;
     using SocialNetwork.Services.UserSessionUtils;
     using ChangePasswordBindingModel = SocialNetwork.Services.Models.ChangePasswordBindingModel;
-
-    using Microsoft.AspNet.Identity;
-    using System.Web.Http;
 
     [SessionAuthorize]
     [RoutePrefix("api/me")]
@@ -111,7 +109,7 @@ namespace SocialNetwork.Services.Controllers
 
             return this.Ok(new
             {
-                message = "User profile edited successfully.",
+                message = "User profile edited successfully."
             });
         }
 
@@ -181,12 +179,8 @@ namespace SocialNetwork.Services.Controllers
 
             var user = this.SocialNetworkData.Users.GetById(userId);
             var candidatePosts = this.SocialNetworkData.Posts.All()
-                .Where(p => p.Author.Friends
-                    .Any(fr => fr.Id == userId) ||
-                    p.WallOwner.Friends
-                    .Any(fr => fr.Id == userId))
-                //.Where(p => user.Friends
-                //    .Any(fr => fr.Id == p.AuthorId || fr.Id == p.WallOwnerId))
+                .Where(p => p.Author.Friends.Any(fr => fr.Id == userId) || 
+                    p.WallOwner.Friends.Any(fr => fr.Id == userId))
                 .OrderByDescending(p => p.Date)
                 .AsEnumerable();
 
@@ -201,7 +195,7 @@ namespace SocialNetwork.Services.Controllers
                 .Take(feedModel.PageSize)
                 .Select(p => PostViewModel.Create(p, user));
 
-            if (pagePosts.Count() == 0)
+            if (pagePosts.Any())
             {
                 return this.Ok(Enumerable.Empty<string>());
             }

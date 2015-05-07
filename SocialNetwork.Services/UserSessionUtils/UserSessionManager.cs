@@ -115,8 +115,8 @@ namespace SocialNetwork.Services.UserSessionUtils
             }
 
             var currentUserId = this.GetCurrentUserId();
-            var userSession = this.Data.UserSessions.All().FirstOrDefault(session =>
-                session.AuthToken == authToken && session.OwnerUserId == currentUserId);
+            var userSession = this.Data.UserSessions.All()
+                .FirstOrDefault(session => session.AuthToken == authToken && session.OwnerUserId == currentUserId);
 
             if (userSession == null)
             {

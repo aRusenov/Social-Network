@@ -151,17 +151,14 @@
             this.Authentication.SignOut(DefaultAuthenticationTypes.ExternalBearer);
 
             // Delete the user's session from the database (revoke its bearer token)
-            var requestProperties = this.Request.Properties;
             var owinContext = this.Request.GetOwinContext();
             var userSessionManager = new UserSessionManager(owinContext);
             userSessionManager.InvalidateUserSession();
 
-            return this.Ok(
-                new
-                {
-                    message = "Logout successful."
-                }
-            );
+            return this.Ok(new
+            {
+                message = "Logout successful."
+            });
         }
 
         [HttpGet]
@@ -172,7 +169,7 @@
                 .FirstOrDefault(u => u.UserName == username);
             if (targetUser == null)
             {
-                return this.BadRequest(string.Format("User {0} does not exist.", username));
+                return this.NotFound();
             }
 
             var loggedUserId = this.User.Identity.GetUserId();
@@ -226,7 +223,7 @@
                 .FirstOrDefault(u => u.UserName == username);
             if (targetUser == null)
             {
-                return this.BadRequest(string.Format("User {0} does not exist.", username));
+                return this.NotFound();
             }
 
             var loggedUserId = this.User.Identity.GetUserId();

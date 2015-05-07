@@ -3,7 +3,6 @@
     using System;
     
     using Microsoft.Owin;
-    using Microsoft.Owin.Cors;
     using Microsoft.Owin.Security.OAuth;
     using Owin;
     

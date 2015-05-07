@@ -1,13 +1,14 @@
-﻿using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-using System.Web.Http.Controllers;
-using SocialNetwork.Data;
-using SocialNetwork.Data.Contracts;
-
-namespace SocialNetwork.Services.UserSessionUtils
+﻿namespace SocialNetwork.Services.UserSessionUtils
 {
+    using System.Linq;
+    using System.Net;
+    using System.Net.Http;
+    using System.Web.Http;
+    using System.Web.Http.Controllers;
+    
+    using SocialNetwork.Data;
+    using SocialNetwork.Data.Contracts;
+
     public class SessionAuthorizeAttribute : AuthorizeAttribute
     {
         public SessionAuthorizeAttribute()

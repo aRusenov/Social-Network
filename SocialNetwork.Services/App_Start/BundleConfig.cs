@@ -20,9 +20,9 @@ namespace SocialNetwork.Services
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js"));
 
-            bundles.Add(new StyleBundle("~/PostContent/css").Include(
-                      "~/PostContent/bootstrap.css",
-                      "~/PostContent/site.css"));
+            bundles.Add(new StyleBundle("~/Content/css").Include(
+                      "~/Content/bootstrap.css",
+                      "~/Content/Site.css"));
         }
     }
 }

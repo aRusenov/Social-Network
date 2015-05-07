@@ -101,6 +101,7 @@ namespace SocialNetwork.Services.Providers
             {
                 { "userName", userName }
             };
+
             return new AuthenticationProperties(data);
         }
     }
