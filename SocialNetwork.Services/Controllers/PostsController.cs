@@ -102,6 +102,12 @@ namespace SocialNetwork.Services.Controllers
         [Route("{id}")]
         public IHttpActionResult Put(int id, EditPostBindingModel post)
         {
+            var userId = this.User.Identity.GetUserId();
+            if (userId == null)
+            {
+                return this.BadRequest("Invalid session token.");
+            }
+
             if (!this.ModelState.IsValid)
             {
                 return this.BadRequest(this.ModelState);
@@ -114,6 +120,11 @@ namespace SocialNetwork.Services.Controllers
             if (existingPost == null)
             {
                 return this.NotFound();
+            }
+
+            if (existingPost.AuthorId != userId)
+            {
+                return this.BadRequest("Only post author can edit posts.");
             }
 
             existingPost.Content = post.PostContent;
@@ -131,12 +142,25 @@ namespace SocialNetwork.Services.Controllers
         [Route("{id}")]
         public IHttpActionResult Delete(int id)
         {
+            var userId = this.User.Identity.GetUserId();
+            if (userId == null)
+            {
+                return this.BadRequest("Invalid session token.");
+            }
+
             var existingPost = this.SocialNetworkData.Posts.All()
                 .FirstOrDefault(p => p.Id == id);
 
             if (existingPost == null)
             {
                 return this.NotFound();
+            }
+
+            bool canDeletePost = existingPost.AuthorId == userId 
+                || existingPost.WallOwnerId == userId;
+            if (!canDeletePost)
+            {
+                return this.BadRequest("Only post author or wall owner can delete posts.");
             }
 
             this.SocialNetworkData.Posts.Delete(existingPost);

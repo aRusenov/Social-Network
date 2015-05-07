@@ -32,25 +32,45 @@
         }
 
         [TestMethod]
-        public void EditPostShouldModifyPostAndReturnData()
+        public void EditingOwnPostShouldModifyPostAndReturnData()
         {
-            this.Login(SeededUserUsername, SeededUserPassword);
+            var loginResponse = this.Login(SeededUserUsername, SeededUserPassword);
+            var username = loginResponse.Content.ReadAsStringAsync().Result.ToJson()["userName"];
 
-            var post = this.Data.Posts.All().First();
+            var ownPost = this.Data.Posts.All()
+                .First(p => p.Author.UserName == username);
             var formData = new FormUrlEncodedContent(new[]
             {
                 new KeyValuePair<string, string>("postContent", "new content")
             });
 
             var putResponse = this.httpClient.PutAsync(
-                string.Format("api/posts/{0}", post.Id), formData).Result;
+                string.Format("api/posts/{0}", ownPost.Id), formData).Result;
             var responseData = putResponse.Content.ReadAsStringAsync().Result.ToJson<string, object>();
 
-            this.Data = new SocialNetworkData();
+            this.ReloadContext();
 
             Assert.AreEqual(HttpStatusCode.OK, putResponse.StatusCode);
             Assert.AreEqual(responseData["content"],
-                this.Data.Posts.GetById(post.Id).Content);
+                this.Data.Posts.GetById(ownPost.Id).Content);
+        }
+
+        [TestMethod]
+        public void EditForeignPostShoulReturnBadRequest()
+        {
+            var loginResponse = this.Login(SeededUserUsername, SeededUserPassword);
+            var username = loginResponse.Content.ReadAsStringAsync().Result.ToJson()["userName"];
+            var foreignPost = this.Data.Posts.All()
+                .First(p => p.Author.Name != username);
+            var formData = new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("postContent", "new content")
+            });
+
+            var putResponse = this.httpClient.PutAsync(
+                string.Format("api/posts/{0}", foreignPost.Id), formData).Result;
+
+            Assert.AreEqual(HttpStatusCode.BadRequest, putResponse.StatusCode);
         }
 
         [TestMethod]
@@ -69,6 +89,27 @@
             var samePost = this.Data.Posts.GetById(post.Id);
 
             Assert.IsNull(samePost);
+        }
+
+        [TestMethod]
+        [Ignore]
+        public void DeletingForeignPostOnOwnWallShouldReturn200Ok()
+        {
+            
+        }
+
+        [TestMethod]
+        [Ignore]
+        public void DeletingOwnPostOnForeignWallShouldReturn200Ok()
+        {
+
+        }
+
+        [TestMethod]
+        [Ignore]
+        public void DeletingForeignPostOnForeignWallShouldReturnBadRequest()
+        {
+
         }
 
         [TestMethod]
