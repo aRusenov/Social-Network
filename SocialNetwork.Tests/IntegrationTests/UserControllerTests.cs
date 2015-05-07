@@ -64,16 +64,13 @@
 
             var getUserResponse = await this.httpClient.GetAsync(string.Format("api/users/{0}/preview", SeededUserUsername));
 
-            var getUserResponseString = getUserResponse.Content.ReadAsStringAsync().Result;
-            var getUserResponseData = getUserResponseString.ToJson();
+            var responseData = getUserResponse.Content.ReadAsAsync<UserViewModelMinified>().Result;
 
             Assert.AreEqual(HttpStatusCode.OK, getUserResponse.StatusCode);
-            Assert.IsNotNull(getUserResponseData["id"]);
-            Assert.IsNotNull(getUserResponseData["userName"]);
-            Assert.IsNotNull(getUserResponseData["name"]);
-            Assert.IsNotNull(getUserResponseData["isFriend"]);
-            Assert.IsNotNull(getUserResponseData["hasPendingRequest"]);
-            Assert.IsTrue(getUserResponseData.ContainsKey("profileImage"));
+            Assert.IsNotNull(responseData.Id);
+            Assert.IsNotNull(responseData.Name);
+            Assert.IsNotNull(responseData.Username);
+            Assert.IsNotNull(responseData.Gender);
         }
 
         [TestMethod]
@@ -142,9 +139,10 @@
             {
                 // Post data
                 Assert.IsNotNull(post.Id);
-                Assert.IsNotNull(post.AuthorId);
-                Assert.IsNotNull(post.AuthorProfileImage);
-                Assert.IsNotNull(post.AuthorUsername);
+                Assert.IsNotNull(post.Author.Id);
+                Assert.IsNotNull(post.Author.Username);
+                Assert.IsNotNull(post.WallOwner.Id);
+                Assert.IsNotNull(post.WallOwner.Username);
                 Assert.IsNotNull(post.PostContent);
                 Assert.IsNotNull(post.Date);
                 Assert.IsNotNull(post.LikesCount);

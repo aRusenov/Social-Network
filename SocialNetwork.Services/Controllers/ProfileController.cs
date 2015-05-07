@@ -1,4 +1,6 @@
-﻿namespace SocialNetwork.Services.Controllers
+﻿using SocialNetwork.Services.Models.FriendRequests;
+
+namespace SocialNetwork.Services.Controllers
 {
     using System.Linq;
     using System.Threading.Tasks;
@@ -49,13 +51,12 @@
 
             return this.Ok(new
             {
-                userName = user.UserName,
+                id = user.Id,
+                username = user.UserName,
                 name = user.Name,
-                gender = user.Gender.ToString(),
-                email = user.Email,
-                phoneNumber = user.PhoneNumber,
-                image = user.ProfileImageData,
-                friendsCount = user.Friends.Count
+                profileImageData = user.ProfileImageData,
+                gender = user.Gender,
+                coverImageData = user.CoverImageData
             });
         }
 
@@ -96,12 +97,11 @@
 
             currentUser.Name = model.Name;
             currentUser.Email = model.Email;
-            currentUser.PhoneNumber = model.PhoneNumber;
             currentUser.Gender = model.Gender;
             currentUser.ProfileImageData = model.ProfileImageData;
 
-            var minifiedDataUrl = ImageUtility.Resize(model.ProfileImageData, 100, 100);
-            currentUser.ProfileImageDataMinified = minifiedDataUrl;
+            currentUser.ProfileImageDataMinified =
+                model.ProfileImageData ?? ImageUtility.Resize(model.ProfileImageData, 100, 100);
 
             currentUser.CoverImageData = model.CoverImageData;
 
@@ -156,13 +156,7 @@
             var user = this.SocialNetworkData.Users.GetById(userId);
             var friends = user.Friends
                 .OrderBy(fr => fr.Name)
-                .Select(fr => new
-                {
-                    id = fr.Id,
-                    userName = fr.UserName,
-                    name = fr.Name,
-                    image = fr.ProfileImageData
-                });
+                .Select(UserViewModelMinified.Create);
 
             return this.Ok(friends);
         }
@@ -195,7 +189,7 @@
                 .Take(feedModel.PageSize)
                 .Select(p => PostViewModel.Create(p, user));
 
-            if (pagePosts.Any())
+            if (!pagePosts.Any())
             {
                 return this.Ok(Enumerable.Empty<string>());
             }
@@ -215,19 +209,8 @@
 
             var user = this.SocialNetworkData.Users.GetById(userId);
             var friendRequests = user.FriendRequests
-                .OrderBy(r => (int) r.Status)
-                .Select(r => new
-                {
-                    id = r.Id,
-                    status = r.Status,
-                    user = new
-                    {
-                        id = r.From.Id,
-                        userName = r.From.UserName,
-                        name = r.From.Name,
-                        image = r.From.ProfileImageData
-                    }
-                });
+                .Where(r => r.Status == FriendRequestStatus.Pending)
+                .Select(FriendRequestViewModel.Create);
 
             return this.Ok(friendRequests);
         }
@@ -242,10 +225,6 @@
                 return this.NotFound();
             }
 
-            if (request.Status != FriendRequestStatus.Pending)
-            {
-                return this.BadRequest("Request status is already resolved.");
-            }
 
             var userId = this.User.Identity.GetUserId();
             if (userId == null)
@@ -253,8 +232,13 @@
                 return this.BadRequest("Invalid session token.");
             }
 
+            if (request.Status != FriendRequestStatus.Pending)
+            {
+                return this.BadRequest("Request status is already resolved.");
+            }
+
             var user = this.SocialNetworkData.Users.GetById(userId);
-            if (!user.FriendRequests.Contains(request))
+            if (request.ToId != userId)
             {
                 return this.BadRequest("Friend request belongs to different user.");
             }
@@ -330,7 +314,11 @@
             recipient.FriendRequests.Add(friendRequest);
             this.SocialNetworkData.SaveChanges();
 
-            return this.Ok();
+            return this.Ok(new
+            {
+                message = string.Format(
+                    "Friend request successfully sent to {0}.", recipient.Name)
+            });
         }
     }
 }

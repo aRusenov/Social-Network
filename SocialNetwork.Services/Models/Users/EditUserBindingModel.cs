@@ -13,9 +13,6 @@
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        [Display(Name = "Phone number")]
-        public string PhoneNumber { get; set; }
-
         [Display(Name = "Gender")]
         public Gender Gender { get; set; }
 

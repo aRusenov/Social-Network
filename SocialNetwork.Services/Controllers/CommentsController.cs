@@ -1,44 +1,46 @@
-﻿using Microsoft.AspNet.Identity;
-using SocialNetwork.Services.Models.Likes;
-
-namespace SocialNetwork.Services.Controllers
+﻿namespace SocialNetwork.Services.Controllers
 {
     using System;
     using System.Linq;
     using System.Web.Http;
+
+    using Microsoft.AspNet.Identity;
     
     using SocialNetwork.Models;
     using SocialNetwork.Services.Models;
+    using SocialNetwork.Services.Models.Comments;
+    using SocialNetwork.Services.Models.Likes;
     using SocialNetwork.Services.UserSessionUtils;
-
+    
     [SessionAuthorize]
     [RoutePrefix("api/posts/{postId}/comments")]
     public class CommentsController : BaseApiController
     {
-        //[HttpGet]
-        //[Route("{postId}/comments")]
-        //public IHttpActionResult Get(int postId)
-        //{
-        //    var existingPost = this.SocialNetworkData.Posts.All()
-        //        .FirstOrDefault(p => p.Id == postId);
-        //    if (existingPost == null)
-        //    {
-        //        return this.NotFound();
-        //    }
+        [HttpGet]
+        [Route]
+        public IHttpActionResult Get(int postId)
+        {
+            var userId = this.User.Identity.GetUserId();
+            if (userId == null)
+            {
+                return this.BadRequest("Invalid session token.");
+            }
 
-        //    var comments = existingPost.Comments
-        //        .Select(c => new
-        //        {
-        //            postId = c.Id,
-        //            authorId = c.AuthorId,
-        //            postId = c.PostId,
-        //            likes = c.Likes.Count,
-        //            content = c.PostContent,
-        //            date = c.Date
-        //        });
+            var user = this.SocialNetworkData.Users.GetById(userId);
 
-        //    return this.Ok(comments);
-        //}
+            var existingPost = this.SocialNetworkData.Posts.All()
+                .FirstOrDefault(p => p.Id == postId);
+            if (existingPost == null)
+            {
+                return this.NotFound();
+            }
+
+            var comments = existingPost.Comments
+                .OrderByDescending(c => c.Date)
+                .Select(c => CommentViewModel.Create(c, user));
+
+            return this.Ok(comments);
+        }
 
         [HttpPost]
         [Route]
@@ -81,15 +83,7 @@ namespace SocialNetwork.Services.Controllers
             this.SocialNetworkData.Comments.Add(comment);
             this.SocialNetworkData.Comments.SaveChanges();
 
-            return this.Ok(new
-            {
-                id = comment.Id,
-                authorId = comment.AuthorId,
-                postId = comment.PostId,
-                likes = comment.Likes.Count,
-                content = comment.Content,
-                date = comment.Date
-            });
+            return this.Ok(CommentViewModel.Create(comment, user));
         }
 
         [HttpPut]
@@ -168,7 +162,6 @@ namespace SocialNetwork.Services.Controllers
             return this.Ok();
         }
 
-        // <!-- -->
         [HttpGet]
         [Route("{id}/likes")]
         public IHttpActionResult GetLikes(int id)
@@ -180,14 +173,7 @@ namespace SocialNetwork.Services.Controllers
             }
 
             var commentLikes = existingComment.Likes
-                .Select(c => new
-                {
-                    userId = c.UserId,
-                    name = c.User.Name,
-                    username = c.User.UserName,
-                    profileImage = c.User.ProfileImageDataMinified,
-                    commentId = c.CommentId
-                });
+                .Select(CommentLikeViewModel.Create);
 
             return this.Ok(commentLikes);
         }
@@ -204,7 +190,7 @@ namespace SocialNetwork.Services.Controllers
 
             var commentLikes = existingComment.Likes
                 .Take(10)
-                .Select(LikeViewModel.SelectCommentLikeData);
+                .Select(CommentLikeViewModel.Create);
 
             return this.Ok(new
             {
@@ -239,7 +225,7 @@ namespace SocialNetwork.Services.Controllers
 
             if (!this.HasAccessToPost(user, existingPost))
             {
-                return this.BadRequest("Cannot like this comment.");
+                return this.BadRequest("No permission to like this comment.");
             }
 
             bool hasAlreadyLiked = existingComment.Likes.Any(l => l.UserId == userId);
@@ -258,8 +244,8 @@ namespace SocialNetwork.Services.Controllers
 
             return this.Ok(new
             {
-                postId = existingPost.Id,
-                likesCount = existingPost.Likes.Count,
+                commentId = existingComment.Id,
+                likesCount = existingComment.Likes.Count,
                 liked = true
             });
         }
@@ -290,14 +276,14 @@ namespace SocialNetwork.Services.Controllers
 
             if (!this.HasAccessToPost(user, existingPost))
             {
-                return this.BadRequest("Cannot like this comment.");
+                return this.BadRequest("No permission to like this comment.");
             }
 
             var commentLike = existingComment.Likes
                 .FirstOrDefault(l => l.UserId == userId);
             if (commentLike == null)
             {
-                return this.BadRequest("Post has no like.");
+                return this.BadRequest("Comment has not been liked.");
             }
 
             this.SocialNetworkData.CommentLikes.Delete(commentLike);
@@ -305,8 +291,8 @@ namespace SocialNetwork.Services.Controllers
 
             return this.Ok(new
             {
-                postId = existingPost.Id,
-                likesCount = existingPost.Likes.Count,
+                commentId = existingComment.Id,
+                likesCount = existingComment.Likes.Count,
                 liked = false
             });
         }

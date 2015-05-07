@@ -1,7 +1,6 @@
-﻿using System;
-
-namespace SocialNetwork.Services.Controllers
+﻿namespace SocialNetwork.Services.Controllers
 {
+    using System;
     using System.Linq;
     using System.Web.Http;
 
@@ -27,7 +26,7 @@ namespace SocialNetwork.Services.Controllers
             }
 
             var wallOwner = this.SocialNetworkData.Users.All()
-                .FirstOrDefault(u => u.Id == postModel.UserId);
+                .FirstOrDefault(u => u.UserName == postModel.Username);
             if (wallOwner == null)
             {
                 return this.NotFound();
@@ -66,11 +65,7 @@ namespace SocialNetwork.Services.Controllers
             this.SocialNetworkData.Posts.Add(newPost);
             this.SocialNetworkData.SaveChanges();
 
-            return this.Ok(new
-            {
-                message = "Post successfully added.",
-                post = PostViewModel.Create(newPost, loggedUser)
-            });
+            return this.Ok(PostViewModel.Create(newPost, loggedUser));
         }
 
         [HttpGet]
@@ -179,15 +174,14 @@ namespace SocialNetwork.Services.Controllers
                 return this.NotFound();
             }
 
+            var userId = this.User.Identity.GetUserId();
+            if (userId == null)
+            {
+                return this.BadRequest("Invalid session token.");
+            }
+
             var postLikes = existingPost.Likes
-                .Select(l => new DetailedPostLikesViewModel()
-                {
-                    UserId = l.UserId,
-                    Name = l.User.Name,
-                    Username = l.User.UserName,
-                    ProfileImage = l.User.ProfileImageDataMinified,
-                    PostId = l.PostId
-                });
+                .Select(PostLikeViewModel.Create);
  
             return this.Ok(postLikes);
         }
@@ -204,7 +198,7 @@ namespace SocialNetwork.Services.Controllers
 
             var postLikes = existingPost.Likes
                 .Take(10)
-                .Select(LikeViewModel.SelectPostLikeData);
+                .Select(PostLikeViewModel.Create);
 
             return this.Ok(new
             {
@@ -233,7 +227,7 @@ namespace SocialNetwork.Services.Controllers
 
             if (!this.HasAccessToPost(user, existingPost))
             {
-                return this.BadRequest("Cannot like this post.");
+                return this.BadRequest("No permission to like this post.");
             }
 
             bool hasAlreadyLiked = existingPost.Likes.Any(l => l.UserId == userId);
@@ -278,7 +272,7 @@ namespace SocialNetwork.Services.Controllers
 
             if (!this.HasAccessToPost(user, existingPost))
             {
-                return this.BadRequest("Cannot like this post.");
+                return this.BadRequest("No permission to unlike this post.");
             }
 
             var postLike = existingPost.Likes

@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using SocialNetwork.Services.Models.Users;
     using SocialNetwork.Services.Models.Comments;
     using SocialNetwork.Models;
 
@@ -11,13 +12,9 @@
     {
         public int Id { get; set; }
 
-        public string AuthorId { get; set; }
+        public UserViewModelMinified Author { get; set; }
 
-        public string AuthorUsername { get; set; }
-
-        public string AuthorProfileImage { get; set; }
-
-        public string WallOwnerId { get; set; }
+        public UserViewModelMinified WallOwner { get; set; }
 
         public string PostContent { get; set; }
 
@@ -36,10 +33,8 @@
             return new PostViewModel()
             {
                 Id = p.Id,
-                AuthorId = p.AuthorId,
-                AuthorUsername = p.Author.UserName,
-                AuthorProfileImage = p.Author.ProfileImageDataMinified,
-                WallOwnerId = p.WallOwnerId,
+                Author = UserViewModelMinified.Create(p.Author),
+                WallOwner = UserViewModelMinified.Create(p.WallOwner),
                 PostContent = p.Content,
                 Date = p.Date,
                 LikesCount = p.Likes.Count,

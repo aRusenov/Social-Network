@@ -6,9 +6,13 @@
     {
         public string Id { get; set; }
 
-        public string ProfileImageDataMinified { get; set; }
+        public string ProfileImageData { get; set; }
+
+        public string Username { get; set; }
 
         public string Name { get; set; }
+
+        public Gender Gender { get; set; }
 
         public static UserViewModelMinified Create(ApplicationUser user)
         {
@@ -16,7 +20,9 @@
             {
                 Id = user.Id,
                 Name = user.Name,
-                ProfileImageDataMinified = user.ProfileImageDataMinified
+                Username = user.Name,
+                Gender = user.Gender,
+                ProfileImageData = user.ProfileImageDataMinified
             };
         }
     }

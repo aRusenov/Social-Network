@@ -202,7 +202,6 @@
                 foreach (var post in responseData)
                 {
                     Assert.IsNotNull(post.Id);
-
                     postIds.Add(post.Id);
                 }
 

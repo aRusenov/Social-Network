@@ -126,14 +126,14 @@
             Assert.AreEqual(HttpStatusCode.OK, getLikesResponse.StatusCode);
 
             var responseData = getLikesResponse.Content
-                .ReadAsAsync<ICollection<DetailedPostLikesViewModel>>().Result;
+                .ReadAsAsync<ICollection<PostLikeViewModel>>().Result;
 
             foreach (var postLike in responseData)
             {
-                Assert.IsNotNull(postLike.Name);
                 Assert.IsNotNull(postLike.PostId);
-                Assert.IsNotNull(postLike.UserId);
-                Assert.IsNotNull(postLike.Username);
+                Assert.IsNotNull(postLike.User.Id);
+                Assert.IsNotNull(postLike.User.Username);
+                Assert.IsNotNull(postLike.User.Gender);
             }
         }
 
@@ -229,7 +229,7 @@
             var formData = new FormUrlEncodedContent(new[]
             {
                 new KeyValuePair<string, string>("postContent", "Heeey brother.."),
-                new KeyValuePair<string, string>("userId", user.Id)
+                new KeyValuePair<string, string>("username", user.UserName)
             });
 
             int postsCount = user.WallPosts.Count;
@@ -256,7 +256,7 @@
             var formData = new FormUrlEncodedContent(new[]
             {
                 new KeyValuePair<string, string>("postContent", "Heeey brother.."),
-                new KeyValuePair<string, string>("userId", friend.Id)
+                new KeyValuePair<string, string>("username", friend.UserName)
             });
 
             int wallPostsCounts = friend.WallPosts.Count;

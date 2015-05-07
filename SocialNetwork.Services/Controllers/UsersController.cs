@@ -178,21 +178,7 @@
                 return this.BadRequest("Invalid session token.");
             }
 
-            bool isFriend = targetUser.Friends
-                .Any(fr => fr.Id == loggedUserId);
-
-            bool hasPendingRequest = targetUser.FriendRequests
-                .Any(r => r.FromId == loggedUserId || r.ToId == loggedUserId);
-
-            return this.Ok(new
-            {
-                id = targetUser.Id,
-                userName = targetUser.UserName,
-                name = targetUser.Name,
-                profileImage = targetUser.ProfileImageDataMinified,
-                isFriend,
-                hasPendingRequest
-            });
+            return this.Ok(UserViewModelMinified.Create(targetUser));
         }
 
         [HttpGet]
@@ -210,7 +196,7 @@
                 .Where(u => u.Name.ToLower().Contains(searchTerm))
                 .Take(5)
                 .AsEnumerable()
-                .Select(u => UserViewModelMinified.Create(u));
+                .Select(UserViewModelMinified.Create);
 
             return this.Ok(userMatches);
         }
@@ -232,22 +218,9 @@
                 return this.BadRequest("Invalid session token.");
             }
 
-            bool isFriend = targetUser.Friends
-                .Any(fr => fr.Id == loggedUserId);
+            var loggedUser = this.SocialNetworkData.Users.GetById(loggedUserId);
 
-            bool hasPendingRequest = targetUser.FriendRequests
-                .Any(r => r.FromId == loggedUserId || r.ToId == loggedUserId);
-
-            return this.Ok(new
-            {
-                id = targetUser.Id,
-                userName = targetUser.UserName,
-                name = targetUser.Name,
-                profileImage = targetUser.ProfileImageData,
-                coverImage = targetUser.CoverImageData,
-                isFriend,
-                hasPendingRequest
-            });
+            return this.Ok(UserViewModel.Create(targetUser, loggedUser));
         }
 
         [HttpGet]
@@ -274,15 +247,15 @@
 
             var loggedUser = this.SocialNetworkData.Users.GetById(loggedUserId);
 
-            if (wallOwner.Id != loggedUserId)
-            {
-                var isFriendOfWallOwner = wallOwner.Friends
-                   .Any(fr => fr.Id == loggedUserId);
-                if (!isFriendOfWallOwner)
-                {
-                    return this.BadRequest("Cannot view non-friend wall.");
-                }
-            }
+            //if (wallOwner.Id != loggedUserId)
+            //{
+            //    var isFriendOfWallOwner = wallOwner.Friends
+            //       .Any(fr => fr.Id == loggedUserId);
+            //    if (!isFriendOfWallOwner)
+            //    {
+            //        return this.BadRequest("Cannot view non-friend wall.");
+            //    }
+            //}
 
             var candidatePosts = wallOwner.WallPosts
                 .OrderByDescending(p => p.Date)
@@ -321,19 +294,13 @@
 
             if (!isFriend)
             {
-                return this.BadRequest("Cannot access non-friend data.");
+                return this.BadRequest("Cannot access non-friend friends.");
             }
 
             var friends = user.Friends
                 .Reverse()
                 .Take(6)
-                .Select(fr => new
-                {
-                    id = fr.Id,
-                    username = fr.UserName,
-                    name = fr.Name,
-                    image = fr.ProfileImageData
-                });
+                .Select(UserViewModelMinified.Create);
 
             return this.Ok(new
             {
@@ -360,24 +327,14 @@
 
             if (!isFriend)
             {
-                return this.BadRequest("Cannot access non-friend data.");
+                return this.BadRequest("Cannot access non-friend friends.");
             }
 
             var friends = user.Friends
                 .OrderBy(fr => fr.Name)
-                .Select(fr => new
-                {
-                    id = fr.Id,
-                    username = fr.UserName,
-                    name = fr.Name,
-                    image = fr.ProfileImageData
-                });
+                .Select(UserViewModelMinified.Create);
 
-            return this.Ok(new
-            {
-                totalCount = user.Friends.Count(),
-                friends
-            });
+            return this.Ok(friends);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace SocialNetwork.Services
+﻿using Newtonsoft.Json.Serialization;
+
+namespace SocialNetwork.Services
 {
     using System.Net.Http.Headers;
     using System.Web.Http;
@@ -30,6 +32,8 @@
             );
 
             config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
+            config.Formatters.JsonFormatter.SerializerSettings.ContractResolver =
+                new CamelCasePropertyNamesContractResolver();
         }
     }
 }
