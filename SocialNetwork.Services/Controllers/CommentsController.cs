@@ -157,16 +157,23 @@
             }
 
             this.SocialNetworkData.Comments.Delete(existingComment);
+
+            var commentLikes = existingComment.Likes;
+            foreach (var commentLike in commentLikes)
+            {
+                this.SocialNetworkData.CommentLikes.Delete(commentLike);
+            }
+
             this.SocialNetworkData.SaveChanges();
 
             return this.Ok();
         }
 
         [HttpGet]
-        [Route("{id}/likes")]
-        public IHttpActionResult GetLikes(int id)
+        [Route("{commentId}/likes")]
+        public IHttpActionResult GetLikes(int commentId)
         {
-            var existingComment = this.SocialNetworkData.Comments.GetById(id);
+            var existingComment = this.SocialNetworkData.Comments.GetById(commentId);
             if (existingComment == null)
             {
                 return this.NotFound();
@@ -179,10 +186,10 @@
         }
 
         [HttpGet]
-        [Route("{id}/likes/preview")]
-        public IHttpActionResult GetLikesPreview(int id)
+        [Route("{commentId}/likes/preview")]
+        public IHttpActionResult GetLikesPreview(int commentId)
         {
-            var existingComment = this.SocialNetworkData.Comments.GetById(id);
+            var existingComment = this.SocialNetworkData.Comments.GetById(commentId);
             if (existingComment == null)
             {
                 return this.NotFound();

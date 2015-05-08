@@ -159,6 +159,19 @@
             }
 
             this.SocialNetworkData.Posts.Delete(existingPost);
+
+            var postLikes = existingPost.Likes;
+            foreach (var postLike in postLikes)
+            {
+                this.SocialNetworkData.PostLikes.Delete(postLike);
+            }
+
+            var postComments = existingPost.Comments;
+            foreach (var postComment in postComments)
+            {
+                this.SocialNetworkData.Comments.Delete(postComment);
+            }
+
             this.SocialNetworkData.Posts.SaveChanges();
 
             return this.Ok();

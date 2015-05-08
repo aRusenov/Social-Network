@@ -1,6 +1,4 @@
-﻿using SocialNetwork.Services.Models.Comments;
-
-namespace SocialNetwork.Tests.IntegrationTests
+﻿namespace SocialNetwork.Tests.IntegrationTests
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -8,8 +6,9 @@ namespace SocialNetwork.Tests.IntegrationTests
     using System.Net.Http;
     
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    
+
     using SocialNetwork.Common;
+    using SocialNetwork.Services.Models.Comments;
 
     [TestClass]
     public class CommentsControllerTests : BaseIntegrationTest
