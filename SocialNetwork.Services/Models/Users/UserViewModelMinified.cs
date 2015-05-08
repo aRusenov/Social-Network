@@ -20,7 +20,7 @@
             {
                 Id = user.Id,
                 Name = user.Name,
-                Username = user.Name,
+                Username = user.UserName,
                 Gender = user.Gender,
                 ProfileImageData = user.ProfileImageDataMinified
             };
