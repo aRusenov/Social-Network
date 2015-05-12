@@ -54,6 +54,7 @@ namespace SocialNetwork.Services.Controllers
                 id = user.Id,
                 username = user.UserName,
                 name = user.Name,
+                email = user.Email,
                 profileImageData = user.ProfileImageData,
                 gender = user.Gender,
                 coverImageData = user.CoverImageData
