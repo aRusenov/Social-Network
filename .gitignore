@@ -1,0 +1,6 @@
+/TestResulsts
+/packages
+/*.suo
+/*.DotSettings.user
+bin
+obj
