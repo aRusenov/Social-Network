@@ -162,6 +162,29 @@
         }
 
         [HttpGet]
+        [Route("friends/preview")]
+        public IHttpActionResult GetFriendsPreview()
+        {
+            var userId = this.User.Identity.GetUserId();
+            if (userId == null)
+            {
+                return this.BadRequest();
+            }
+
+            var user = this.SocialNetworkData.Users.GetById(userId);
+            var friends = user.Friends
+                .Reverse()
+                .Take(6)
+                .Select(UserViewModelMinified.Create);
+
+            return this.Ok(new
+            {
+                totalCount = user.Friends.Count(),
+                friends
+            });
+        }
+
+        [HttpGet]
         [Route("feed")]
         public IHttpActionResult GetNewsFeed([FromUri]NewsFeedBindingModel feedModel)
         {
