@@ -1,12 +1,14 @@
-﻿namespace SocialNetwork.Services.Controllers
+﻿using System.Web.Script.Serialization;
+
+namespace SocialNetwork.Services.Controllers
 {
-    using System.Linq;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
     using System.Net.Http;
     using System.Threading.Tasks;
     using System.Web.Http;
-    using System.Web.Script.Serialization;
+    //using System.Web.Script.Serialization;
 
     using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;
@@ -72,7 +74,8 @@
             {
                 UserName = model.Username,
                 Name = model.Name,
-                Email = model.Email
+                Email = model.Email,
+                Gender = model.Gender
             };
 
             var identityResult = await this.UserManager.CreateAsync(user, model.Password);

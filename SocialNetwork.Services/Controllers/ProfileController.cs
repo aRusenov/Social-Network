@@ -1,6 +1,4 @@
-﻿using SocialNetwork.Services.Models.FriendRequests;
-
-namespace SocialNetwork.Services.Controllers
+﻿namespace SocialNetwork.Services.Controllers
 {
     using System.Linq;
     using System.Threading.Tasks;
@@ -12,6 +10,7 @@ namespace SocialNetwork.Services.Controllers
     using SocialNetwork.Common;
     using SocialNetwork.Data;
     using SocialNetwork.Models;
+    using SocialNetwork.Services.Models.FriendRequests;
     using SocialNetwork.Services.Models.Posts;
     using SocialNetwork.Services.Models.Users;
     using SocialNetwork.Services.UserSessionUtils;

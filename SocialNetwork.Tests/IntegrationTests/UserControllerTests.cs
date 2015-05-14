@@ -36,7 +36,7 @@
                 new KeyValuePair<string, string>("confirmPassword", "pitona"),
                 new KeyValuePair<string, string>("name", "Mitio Pishtova"),
                 new KeyValuePair<string, string>("email", "mm@aha.bg"),
-                new KeyValuePair<string, string>("phone", "+359 9315 17238")
+                new KeyValuePair<string, string>("gender", 2.ToString())
             });
 
             var httpResponse = this.httpClient.PostAsync(ApiEndpoints.UserRegister, loginData).Result;

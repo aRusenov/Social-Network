@@ -1,6 +1,5 @@
 ﻿using System.Web;
 using System.Web.Optimization;
-
 namespace SocialNetwork.Services
 {
     public class BundleConfig

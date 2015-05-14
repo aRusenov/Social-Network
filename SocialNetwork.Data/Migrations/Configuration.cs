@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Data.Entity.Migrations;
     using System.Linq;
-    
+
     using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;
 
@@ -188,20 +188,14 @@
             foreach (var user in users)
             {
                 var password = user.UserName;
-                try
+
+                var userCreateResult = userManager.Create(user, password);
+                if (!userCreateResult.Succeeded)
                 {
-                    var userCreateResult = userManager.Create(user, password);
-                    if (!userCreateResult.Succeeded)
-                    {
-                        throw new Exception(string.Join(Environment.NewLine, userCreateResult.Errors));
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine();
+                    throw new Exception(string.Join(Environment.NewLine, userCreateResult.Errors));
                 }
             }
-            
+
             context.SaveChanges();
 
             return users;
