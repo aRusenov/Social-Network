@@ -70,6 +70,13 @@ namespace SocialNetwork.Services.Controllers
                 return this.BadRequest(this.ModelState);
             }
 
+            var emailExists = this.SocialNetworkData.Users.All()
+                .Any(x => x.Email == model.Email);
+            if (emailExists)
+            {
+                return this.BadRequest("Email is already taken.");
+            }
+
             var user = new ApplicationUser()
             {
                 UserName = model.Username,

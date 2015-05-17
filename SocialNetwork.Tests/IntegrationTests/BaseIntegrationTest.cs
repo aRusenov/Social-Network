@@ -70,6 +70,34 @@
             }
         }
 
+        protected HttpResponseMessage Get(string endpoint)
+        {
+            var getResponse = this.httpClient.GetAsync(endpoint);
+
+            return getResponse.Result;
+        }
+
+        protected HttpResponseMessage Post(string endpoint, HttpContent data)
+        {
+            var postResponse = this.httpClient.PostAsync(endpoint, data);
+
+            return postResponse.Result;
+        }
+
+        protected HttpResponseMessage Put(string endpoint, HttpContent data)
+        {
+            var putResponse = this.httpClient.PutAsync(endpoint, data);
+
+            return putResponse.Result;
+        }
+
+        protected HttpResponseMessage Delete(string endpoint)
+        {
+            var deleteResponse = this.httpClient.DeleteAsync(endpoint);
+
+            return deleteResponse.Result;
+        }
+
         protected HttpResponseMessage Login(string username, string password)
         {
             var loginData = new FormUrlEncodedContent(new[] 

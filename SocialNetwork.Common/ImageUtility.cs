@@ -1,9 +1,8 @@
-﻿using System.Drawing.Imaging;
-
-namespace SocialNetwork.Common
+﻿namespace SocialNetwork.Common
 {
     using System;
     using System.Drawing;
+    using System.Drawing.Imaging;
     using System.IO;
 
     public class ImageUtility
@@ -13,7 +12,7 @@ namespace SocialNetwork.Common
             return Resize(imageDataUrl, width, height, ImageFormat.Jpeg);
         }
 
-        public static string Resize(string imageDataUrl, int width, int height, ImageFormat format)
+        private static string Resize(string imageDataUrl, int width, int height, ImageFormat format)
         {
             var oldImage = ToImage(imageDataUrl);
 

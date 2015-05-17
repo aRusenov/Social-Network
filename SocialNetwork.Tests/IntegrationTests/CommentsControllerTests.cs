@@ -17,16 +17,19 @@
         public void GettingPostCommentsShouldReturnAllCommentsSortedByDate()
         {
             var loginResponse = this.Login(SeededUserUsername, SeededUserPassword);
-            var username = loginResponse.Content.ReadAsStringAsync().Result.ToJson()["userName"];
+            var username = loginResponse.Content
+                .ReadAsStringAsync().Result.ToJson()["userName"];
 
             var ownPost = this.Data.Posts.All()
                 .First(p => p.Author.UserName == username);
 
             int commentCount = ownPost.Comments.Count;
 
-            var getResponse = this.httpClient.GetAsync(
-                string.Format("api/posts/{0}/comments", ownPost.Id)).Result;
-            var responseData = getResponse.Content.ReadAsAsync<IEnumerable<CommentViewModel>>().Result;
+            var getResponse = this.Get(
+                string.Format("api/posts/{0}/comments", ownPost.Id));
+
+            var responseData = getResponse.Content
+                .ReadAsAsync<IEnumerable<CommentViewModel>>().Result;
 
             Assert.AreEqual(commentCount, responseData.Count());
         }
